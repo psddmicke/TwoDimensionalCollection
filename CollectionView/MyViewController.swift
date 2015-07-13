@@ -8,25 +8,22 @@
 
 import UIKit
 
-class MyViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class MyViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     @IBOutlet weak var collectionView: UICollectionView!
 
-    @IBOutlet weak var headerContainer: UIView!
+    @IBOutlet weak var sideHeader: SideHeaderView!
+    //@IBOutlet weak var headerContainer: UIView!
     
-    var headers:[UIView]!
+    //var headers:[UIView]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        initHeaderArray()
     
 
         // Do any additional setup after loading the view.
     }
     
-    func initHeaderArray() {
-        headers = headerContainer.subviews as! [UIView]
-        headers.sort({$0.center.y < $1.center.y})
-    }
+   
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -43,11 +40,16 @@ class MyViewController: UIViewController, UICollectionViewDataSource, UICollecti
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("dummyCell", forIndexPath: indexPath) as! CollectionViewCell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Cell", forIndexPath: indexPath) as! CollectionViewCell
         //cell.bounds.size = headerRow1.bounds.size
         cell.label.text = String(indexPath.section)
-        cell.backgroundColor = headers[indexPath.row].backgroundColor
+        //cell.backgroundColor = headers[indexPath.row].backgroundColor
         return cell
+    }
+    
+    // MARK: - Flow layout delegate
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        return sideHeader.cellSize
     }
     
 
@@ -60,5 +62,6 @@ class MyViewController: UIViewController, UICollectionViewDataSource, UICollecti
         // Pass the selected object to the new view controller.
     }
     */
+
 
 }

@@ -12,6 +12,7 @@ import UIKit
 class SideHeaderView: UIView {
     @IBInspectable var count: Int = 6
     @IBInspectable var margin: CGFloat = 8
+    var cells: [SideHeaderViewCell] = []
     var labels: [UILabel] = []
 
     required init(coder aDecoder: NSCoder) {
@@ -30,16 +31,14 @@ class SideHeaderView: UIView {
         
         while subviews.count < count ?? 0 {
             let cell = SideHeaderViewCell(frame: CGRect(origin: origin, size: size))
-            
             cell.autoresizingMask = .FlexibleWidth | .FlexibleHeight
+            cell.backgroundColor = UIColor.forIndex(subviews.count)
             addSubview(cell)
+            cells.append(cell)
             cell.index = subviews.count
             let descriptionLabel = UILabel()
             descriptionLabel.text = "This is a description label."
             descriptionLabel.sizeToFit()
-            descriptionLabel.frame.origin.x = size.width
-            descriptionLabel.frame.origin.y = origin.y - (descriptionLabel.bounds.height / 2.0)
-            origin.y += size.height + margin
             labels.append(descriptionLabel)
         }
         for label in labels {
@@ -51,7 +50,33 @@ class SideHeaderView: UIView {
         //
         setup()
     }
-
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        var origin = CGPointZero
+        let size = cellSize
+        for i in 0...cells.count - 1 {
+            let cell = cells[i]
+            cell.frame = CGRect(origin: origin, size: size)
+            cell.layer.cornerRadius = size.width / 2.0
+            
+            let label = labels[i]
+            label.frame.origin.x = size.width
+            label.frame.origin.y = origin.y - label.bounds.midY
+            
+            origin.y += cellSize.height + margin
+            
+        }
+        for cell in cells {
+            
+        }
+    }
+    
+    var cellSize: CGSize {
+        let totalMargins = CGFloat(cells.count - 1) * margin
+        let side = (bounds.height - totalMargins) / CGFloat(cells.count)
+        return CGSize(width: side, height: side)
+    }
 
 }
 
@@ -98,5 +123,19 @@ class SideHeaderViewCell: UIView {
             return collation.sectionIndexTitles[index] as! String
         }
         return String(index)
+    }
+}
+
+extension UIColor {
+    static func forIndex(index: Int) -> UIColor {
+        switch index {
+        case 0: return UIColor.yellowColor()
+        case 1: return UIColor.greenColor()
+        case 2: return UIColor.magentaColor()
+        case 3: return UIColor.redColor()
+        case 4: return UIColor.purpleColor()
+        case 5: return UIColor.brownColor()
+        default: return forIndex(index % 6)
+        }
     }
 }
