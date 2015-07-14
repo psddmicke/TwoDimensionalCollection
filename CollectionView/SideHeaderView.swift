@@ -7,11 +7,14 @@
 //
 
 import UIKit
-
+/**
+    A collection of header cells.
+    Ment to be used when there's a need to match a multi-column table view or collection view with a static header.
+*/
 @IBDesignable
 class SideHeaderView: UIView {
     @IBInspectable var count: Int = 6
-    @IBInspectable var margin: CGFloat = 8
+    @IBInspectable var margin: CGFloat = 8 // y-axis cell margin
     var cells: [SideHeaderViewCell] = []
     var labels: [UILabel] = []
 
@@ -25,6 +28,7 @@ class SideHeaderView: UIView {
         setup()
     }
     
+    /** Setup and add the member subviews. */
     func setup() {
         var origin = CGPointZero
         let size = CGSize(width: bounds.width, height: bounds.width)
@@ -46,32 +50,29 @@ class SideHeaderView: UIView {
         }
     }
     
-    override func prepareForInterfaceBuilder() {
-        //
-        setup()
-    }
-    
     override func layoutSubviews() {
         super.layoutSubviews()
-        var origin = CGPointZero
-        let size = cellSize
+        var origin = CGPointZero // starting origin
+        let size = cellSize // store this so we don't need to calculate each iteration.
+        
+        //iterate the cells
         for i in 0...cells.count - 1 {
             let cell = cells[i]
             cell.frame = CGRect(origin: origin, size: size)
             cell.layer.cornerRadius = size.width / 2.0
             
+            //assuming there's an equal amount of labels.
             let label = labels[i]
             label.frame.origin.x = size.width
             label.frame.origin.y = origin.y - label.bounds.midY
             
+            //next row.
             origin.y += cellSize.height + margin
-            
-        }
-        for cell in cells {
             
         }
     }
     
+    /** The size of the cell. */
     var cellSize: CGSize {
         let totalMargins = CGFloat(cells.count - 1) * margin
         let side = (bounds.height - totalMargins) / CGFloat(cells.count)
@@ -79,7 +80,9 @@ class SideHeaderView: UIView {
     }
 
 }
-
+/**
+    A single cell for the side header view.
+*/
 @IBDesignable
 class SideHeaderViewCell: UIView {
     @IBInspectable var index: Int = 0 {
@@ -99,6 +102,7 @@ class SideHeaderViewCell: UIView {
         setup()
     }
     
+    /** setup and add subviews */
     func setup() {
         label = UILabel(frame: bounds)
         label.autoresizingMask = .FlexibleWidth | .FlexibleHeight
@@ -117,6 +121,8 @@ class SideHeaderViewCell: UIView {
         updateLabel()
     }
     
+    /** Debug method.
+        This returns capitalized letters for indexes starting with A = 0. */
     private func letterForIndex(index: Int) -> String {
         let collation = UILocalizedIndexedCollation.currentCollation() as! UILocalizedIndexedCollation
         if index < collation.sectionIndexTitles.count {
@@ -126,7 +132,8 @@ class SideHeaderViewCell: UIView {
     }
 }
 
-extension UIColor {
+private extension UIColor {
+    /** Returns a color for an integer. */
     static func forIndex(index: Int) -> UIColor {
         switch index {
         case 0: return UIColor.yellowColor()
